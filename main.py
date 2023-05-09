@@ -5,8 +5,7 @@ import utils
 
 
 root = Tk()
-# create a window
-root.configure(bg="black")  #make some design
+root.configure(bg="black")
 root.geometry(f'{settings.WIDTH}x{settings.HEIGHT}')
 root.title("Minesweeper Game")
 root.resizable(False, False)
@@ -57,7 +56,7 @@ for x in range(settings.GRID_SIZE):
         c.cell_btn_object.grid(
             column=x, row=y
         )
-# Call the label from the Cell class
+
 Cell.create_cell_count_label(left_frame)
 Cell.cell_count_label_object.place(
     x=0, y=0
@@ -65,6 +64,5 @@ Cell.cell_count_label_object.place(
 
 Cell.randomize_mines()
 
-
-# Run the window
 root.mainloop()
+
