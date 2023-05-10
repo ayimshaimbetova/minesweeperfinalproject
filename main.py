@@ -26,6 +26,8 @@ game_title = Label(
     font=('', 48)
 )
 
+
+
 game_title.place(
     x=utils.width_prct(25), y=0
 )
@@ -61,8 +63,14 @@ Cell.create_cell_count_label(left_frame)
 Cell.cell_count_label_object.place(
     x=0, y=0
 )
+Cell.create_mines_count_label(left_frame)
+Cell.mines_count_label_object.place(
+    x=0, y=50
+)
 
 Cell.randomize_mines()
+
+
 
 root.mainloop()
 
