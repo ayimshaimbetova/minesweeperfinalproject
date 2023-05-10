@@ -6,8 +6,11 @@ import sys
 
 class Cell:
     all = []
+    mines_count = settings.MINES_COUNT
     cell_count = settings.CELL_COUNT
+    mines_count_label_object =None
     cell_count_label_object = None
+    """"""
     def __init__(self,x, y, is_mine=False):
         self.is_mine = is_mine
         self.is_opened = False
@@ -18,27 +21,16 @@ class Cell:
 
         Cell.all.append(self)
 
+
     def create_btn_object(self, location):
         btn = Button(
             location,
             width=12,
             height=4,
         )
-        btn.bind('<Button-1>', self.left_click_actions )
+        btn.bind('<Button-1>', self.left_click_actions ) #asing an event to a button
         btn.bind('<Button-3>', self.right_click_actions )
         self.cell_btn_object = btn
-
-    @staticmethod
-    def create_cell_count_label(location):
-        lbl = Label(
-            location,
-            bg='black',
-            fg='white',
-            text=f"Cells Left:{Cell.cell_count}",
-            font=("", 30)
-        )
-        Cell.cell_count_label_object = lbl
-
 
 
     def left_click_actions(self, event):
@@ -52,10 +44,46 @@ class Cell:
 
             if Cell.cell_count == settings.MINES_COUNT:
                 ctypes.windll.user32.MessageBoxW(0, 'Congratulations! You won the game!', 'Game Over', 0)
+                sys.exit()
 
 
         self.cell_btn_object.unbind('<Button-1>')
         self.cell_btn_object.unbind('<Button-3>')
+
+    def right_click_actions(self, event):
+        if not self.is_mine_candidate:
+            self.cell_btn_object.configure(
+                bg='orange'
+            )
+            self.is_mine_candidate = True
+        else:
+            self.cell_btn_object.configure(
+                bg='SystemButtonFace'
+            )
+            self.is_mine_candidate = False
+
+
+    def show_mine(self):
+        self.cell_btn_object.configure(bg='red')
+        ctypes.windll.user32.MessageBoxW(0, 'You clicked on a mine', 'Game Over', 0)
+        sys.exit()
+
+
+    def show_cell(self):
+        if not self.is_opened:
+            Cell.cell_count -= 1
+            self.cell_btn_object.configure(text=self.surrounded_cells_mines_length)
+            if Cell.cell_count_label_object:
+                Cell.cell_count_label_object.configure(
+                    text=f"Cells Left:{Cell.cell_count}"
+                )
+
+            self.cell_btn_object.configure(
+                bg='SystemButtonFace'
+            )
+
+
+        self.is_opened = True
 
     def get_cell_by_axis(self, x,y):
 
@@ -88,39 +116,6 @@ class Cell:
 
         return counter
 
-    def show_cell(self):
-        if not self.is_opened:
-            Cell.cell_count -= 1
-            self.cell_btn_object.configure(text=self.surrounded_cells_mines_length)
-            if Cell.cell_count_label_object:
-                Cell.cell_count_label_object.configure(
-                    text=f"Cells Left:{Cell.cell_count}"
-                )
-
-            self.cell_btn_object.configure(
-                bg='SystemButtonFace'
-            )
-
-
-        self.is_opened = True
-
-    def show_mine(self):
-        self.cell_btn_object.configure(bg='red')
-        ctypes.windll.user32.MessageBoxW(0, 'You clicked on a mine', 'Game Over', 0)
-        sys.exit()
-
-
-    def right_click_actions(self, event):
-        if not self.is_mine_candidate:
-            self.cell_btn_object.configure(
-                bg='orange'
-            )
-            self.is_mine_candidate = True
-        else:
-            self.cell_btn_object.configure(
-                bg='SystemButtonFace'
-            )
-            self.is_mine_candidate = False
 
     @staticmethod
     def randomize_mines():
@@ -135,5 +130,23 @@ class Cell:
         return f"Cell({self.x}, {self.y})"
 
 
-    def __repr__(self):
-        return f"Cell({self.x}, {self.y})"
+    @staticmethod
+    def create_cell_count_label(location):
+        lbl = Label(
+            location,
+            bg='black',
+            fg='white',
+            text=f"Cells Left:{Cell.cell_count}",
+            font=("", 30)
+        )
+        Cell.cell_count_label_object = lbl
+
+    def create_mines_count_label(location):
+        lbl1 = Label(
+            location,
+            bg='black',
+            fg='white',
+            text=f"Mines:{Cell.mines_count}",
+            font=("", 30)
+        )
+        Cell.mines_count_label_object = lbl1
